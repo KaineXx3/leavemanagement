@@ -26,6 +26,12 @@ public class DepartmentMemberService {
 
     }
 
+    public long countMembersInDepartment(Long departmentId){
+        if (!departmentRepository.existsById(departmentId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Department not found");
+        }
+        return departmentMemberRepository.countByDepartment_Id(departmentId);    }
+
     public void joinDepartmentByUser(Long departmentId){
         User user = securityService.getAuthenticatedUser();
 

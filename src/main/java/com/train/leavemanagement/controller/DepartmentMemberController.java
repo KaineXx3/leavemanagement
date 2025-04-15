@@ -66,4 +66,28 @@ public class DepartmentMemberController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
         }
     }
+
+    @Operation(
+            summary = "Count members in a department",
+            description = "Returns the total number of users who are members of the specified department."
+    )
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved member count")
+    @ApiResponse(responseCode = "404", description = "Department not found")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+    @GetMapping("/count/{departmentId}")
+    public ResponseEntity<?> countMembers(
+            @Parameter(description = "ID of the department to count members for", required = true)
+            @PathVariable Long departmentId
+    ) {
+        try {
+            long count = departmentMemberService.countMembersInDepartment(departmentId);
+            return ResponseEntity.ok(count);
+        } catch (RuntimeException e) {
+            if (e instanceof ResponseStatusException ex) {
+                return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
+        }
+    }
+
 }

@@ -14,7 +14,7 @@ public interface DepartmentMemberRepository extends JpaRepository<DepartmentMemb
 
     List<DepartmentMember> findAllByDepartment_Id(Long departmentId);
 
-    Optional<DepartmentMember> findByDepartment_Id(Long departmentId);
+    long countByDepartment_Id(Long departmentId);
 
     Optional<DepartmentMember> findByMember_Id(Long memberId);
 
