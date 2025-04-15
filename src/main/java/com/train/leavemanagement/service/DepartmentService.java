@@ -7,6 +7,7 @@ import com.train.leavemanagement.entity.RoleType;
 import com.train.leavemanagement.entity.User;
 import com.train.leavemanagement.repository.DepartmentMemberRepository;
 import com.train.leavemanagement.repository.DepartmentRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ public class DepartmentService {
 
     }
 
+    @Transactional
     public void editDepartmentByAdmin(Long departmentId, DepartmentType departmentType){
         User user = securityService.getAuthenticatedUser();
         if(!user.getRole().equals(RoleType.ADMIN)){

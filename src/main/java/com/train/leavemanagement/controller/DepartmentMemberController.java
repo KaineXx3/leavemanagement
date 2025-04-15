@@ -5,8 +5,9 @@ import com.train.leavemanagement.service.DepartmentMemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/department-members")
 @Tag(name = "Department Member API", description = "Endpoints for managing department members")
-@RequiredArgsConstructor
+@AllArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class DepartmentMemberController {
 
     private final DepartmentMemberService departmentMemberService;
