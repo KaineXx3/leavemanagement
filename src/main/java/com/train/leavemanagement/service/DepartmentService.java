@@ -5,6 +5,7 @@ import com.train.leavemanagement.entity.Department;
 import com.train.leavemanagement.entity.DepartmentType;
 import com.train.leavemanagement.entity.RoleType;
 import com.train.leavemanagement.entity.User;
+import com.train.leavemanagement.repository.DepartmentMemberRepository;
 import com.train.leavemanagement.repository.DepartmentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,10 @@ import java.util.stream.Collectors;
 public class DepartmentService {
     private final DepartmentRepository departmentRepository;
     private final SecurityService securityService;
+
+    private final DepartmentMemberService departmentMemberService;
+
+
 
     public void createDepartmentByAdmin(DepartmentType departmentType){
         User user = securityService.getAuthenticatedUser();
@@ -41,7 +46,10 @@ public class DepartmentService {
                 .personInCharge(user)
                 .build();
 
+
         departmentRepository.save(department);
+        departmentMemberService.joinDepartmentByUser(user.getId());
+
     }
 
     public void editDepartmentByAdmin(Long departmentId, DepartmentType departmentType){

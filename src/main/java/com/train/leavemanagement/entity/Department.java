@@ -3,6 +3,9 @@ package com.train.leavemanagement.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -22,4 +25,8 @@ public class Department {
 
     @OneToOne
     private User personInCharge;
+
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DepartmentMember> departmentMembers = new ArrayList<>();
+
 }
