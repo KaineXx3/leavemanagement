@@ -1,5 +1,4 @@
 🛑 Leave Management System
-A Spring Boot backend application that manages employee leave requests and approvals.
 
 🚀 Features
 Employees can submit leave requests (sick leave, vacation, etc.)
