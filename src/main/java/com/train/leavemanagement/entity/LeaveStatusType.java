@@ -1,3 +1,5 @@
 package com.train.leavemanagement.entity;
 
-public enum LeaveStatusType {PENDING, APPROVED, REJECTED}
+import java.io.Serializable;
+
+public enum LeaveStatusType implements Serializable {PENDING, APPROVED, REJECTED}

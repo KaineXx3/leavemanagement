@@ -9,6 +9,9 @@ import com.train.leavemanagement.repository.DepartmentMemberRepository;
 import com.train.leavemanagement.repository.DepartmentRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,6 +29,7 @@ public class DepartmentService {
 
 
 
+    @CachePut(value = "departments", key = "'all_departments'")
     public void createDepartmentByAdmin(DepartmentType departmentType){
         User user = securityService.getAuthenticatedUser();
         if(!user.getRole().equals(RoleType.ADMIN)){
@@ -54,18 +58,23 @@ public class DepartmentService {
     }
 
     @Transactional
+    @CachePut(value = "departments", key = "'all_departments'")
     public void editDepartmentByAdmin(Long departmentId, DepartmentType departmentType){
         User user = securityService.getAuthenticatedUser();
         if(!user.getRole().equals(RoleType.ADMIN)){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allow to create the department");
         }
 
+        if(departmentRepository.existsByDepartmentType(departmentType)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This department already in charge of other person");
+        }
 
         Department existingDepartment = departmentRepository.findById(departmentId).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND, "No department found"));
         existingDepartment.setDepartmentType(departmentType);
 
     }
 
+    @CacheEvict(value = "departments", key = "'all_departments'")
     public void deleteDepartmentByAdmin(){
         User user = securityService.getAuthenticatedUser();
         if(!user.getRole().equals(RoleType.ADMIN)){
@@ -78,6 +87,7 @@ public class DepartmentService {
 
 
 
+    @Cacheable(value = "departments", key = "'all_departments'")
     public List<DepartmentDTO> getDepartmentInformation(){
         return departmentRepository.findAll()
                 .stream()

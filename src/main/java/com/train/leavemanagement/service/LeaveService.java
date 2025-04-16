@@ -9,10 +9,13 @@ import com.train.leavemanagement.repository.LeaveRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,15 +31,25 @@ public class LeaveService {
     private final DepartmentMemberRepository departmentMemberRepository;
 
     public List<LeaveDTO> getLeaveRequestByUser(){
-        User user =securityService.getAuthenticatedUser();
-
+        User user = securityService.getAuthenticatedUser();
         return leaveRepository.findByUser(user).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    public List<LeaveReportDTO> getLeaveByRequestType(LeaveStatusType leaveStatusType){
+//    @Cacheable(value = "leaveRequestsByStatus", key = "#leaveStatusType.name()")
+//    public List<LeaveReportDTO> getLeaveByRequestType(LeaveStatusType leaveStatusType){
+//        System.out.println("Fetching leave requests with status: " + leaveStatusType); // log if it's called
+//
+//        return leaveRepository.findByApplicationStatus(leaveStatusType).stream().map(this::statusReport).collect(Collectors.toList());
+//    }
 
-        return leaveRepository.findByApplicationStatus(leaveStatusType).stream().map(this::statusReport).collect(Collectors.toList());
+    @Cacheable(value = "leaveRequestsByStatus", key = "#leaveStatusType.name()")
+    public List<LeaveReportDTO> getLeaveByRequestType(LeaveStatusType leaveStatusType) {
+        System.out.println("Fetching leave requests with status: " + leaveStatusType);
+        List<Leave> leaves = leaveRepository.findByApplicationStatus(leaveStatusType);
+        if (leaves == null) return new ArrayList<>(); // Avoid null returns
+        return leaves.stream().map(this::statusReport).collect(Collectors.toList());
     }
+
 
     @Transactional
     public void editLeaveRequestByAdminOrManager(Long leaveId, LeaveStatusType leaveStatusType) {
@@ -61,6 +74,7 @@ public class LeaveService {
 
         leaveRequest.setApplicationStatus(leaveStatusType);
     }
+
 
     public void createLeaveRequest(CreateLeaveDTO createLeaveDTO){
         User user =securityService.getAuthenticatedUser();
