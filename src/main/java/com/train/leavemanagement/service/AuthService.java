@@ -2,15 +2,18 @@ package com.train.leavemanagement.service;
 
 import com.train.leavemanagement.dto.LoginRequestDTO;
 import com.train.leavemanagement.dto.RegisterRequestDTO;
+import com.train.leavemanagement.entity.RoleType;
 import com.train.leavemanagement.entity.User;
 import com.train.leavemanagement.repository.UserRepository;
 import com.train.leavemanagement.util.JwtUtil;
 import com.train.leavemanagement.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 
@@ -114,6 +117,20 @@ public class AuthService {
             System.out.println("✅ Logged out: Token and user-token mapping removed from Redis");
         } else {
             System.out.println("⚠ Token not found in Redis. Maybe it's already expired or was never stored.");
+        }
+    }
+
+    public void verifyByAdmin(Long userId, boolean toVerify){
+        User user = securityService.getAuthenticatedUser();
+        if(!user.getRole().equals(RoleType.ADMIN)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized");
+        }
+        User userPendingVerify = userRepository.findById(userId).orElseThrow(()->new RuntimeException("No user found"));
+        if(!userPendingVerify.isVerified()){
+            userPendingVerify.setVerified(toVerify);
+        }
+        else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This user already verified");
         }
     }
 

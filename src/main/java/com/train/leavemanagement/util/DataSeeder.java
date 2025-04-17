@@ -37,7 +37,7 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void seedUsers() {
-        User admin1 = saveUser("Admin User", "admin@example.com", "admin123", RoleType.ADMIN);
+        User admin1 = saveUser("Admin User", "admin@example.com", "admin123",RoleType.ADMIN);
         User admin2 = saveUser("Admin User", "admin2@example.com", "admin123", RoleType.ADMIN);
         User user1 = saveUser("Regular User", "user@example.com", "user123", RoleType.EMPLOYEE);
         User user2 = saveUser("Regular User", "user2@example.com", "user123", RoleType.EMPLOYEE);
@@ -51,6 +51,7 @@ public class DataSeeder implements CommandLineRunner {
                 .email(email)
                 .password(passwordEncoder.encode(rawPassword))
                 .role(role)
+                .verified(true)
                 .build();
         User savedUser = userRepository.save(user);
         users.put(email, savedUser);

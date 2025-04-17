@@ -8,6 +8,7 @@ import com.train.leavemanagement.repository.UserRepository;
 import com.train.leavemanagement.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,5 +62,24 @@ public class AuthController {
     public ResponseEntity<?> logout() {
         authService.logout();
         return ResponseEntity.ok().build();
+    }
+
+    @Transactional
+    @PutMapping("/verify")
+    @Operation(
+            summary = "Verify users' account by admin",
+            description = "Only admin can verify users' account"
+    )
+    public ResponseEntity<?> logout(@RequestParam Long userId, @RequestParam boolean verifyStatus) {
+        try{
+            authService.verifyByAdmin(userId, verifyStatus);
+            return ResponseEntity.ok().build();
+        }
+        catch (RuntimeException e) {
+            if (e instanceof ResponseStatusException ex) {
+                return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
+        }
     }
 }

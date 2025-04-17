@@ -23,6 +23,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    private boolean verified=false;
+
     @Enumerated(EnumType.STRING)
     private RoleType role;
 
