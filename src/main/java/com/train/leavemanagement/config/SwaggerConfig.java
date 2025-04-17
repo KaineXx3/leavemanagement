@@ -14,7 +14,7 @@ public class SwaggerConfig {
     public OpenAPI swaggerOpenAPI(){
         return new OpenAPI()
                 .info(new Info()
-                        .title("Recycle Wise API")
+                        .title("Leave Management API")
                         .version("1.0")
                         .description("This is a documentation that show how the backend work"))
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication")) // Security requirement
