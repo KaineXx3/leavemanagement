@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/auth")
 @Tag(name = "Authentication API", description = "Endpoints for user registration and login")
 @RequiredArgsConstructor
+@CrossOrigin
 public class AuthController {
 
     private final AuthService authService;
@@ -29,7 +30,7 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO registerRequestDTO){
         try {
             authService.register(registerRequestDTO);
-            return ResponseEntity.ok("Register successfully");
+            return ResponseEntity.ok().build();
         }catch (RuntimeException e) {
             if (e instanceof ResponseStatusException ex) {
                 return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
@@ -57,8 +58,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
+    public ResponseEntity<?> logout() {
         authService.logout();
-        return ResponseEntity.ok("Logged out and token invalidated.");
+        return ResponseEntity.ok().build();
     }
 }

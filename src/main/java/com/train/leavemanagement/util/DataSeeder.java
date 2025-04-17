@@ -30,7 +30,9 @@ public class DataSeeder implements CommandLineRunner {
             seedUsers();
             seedDepartments();
             seedDepartmentMembers();
-            System.out.println("Users, departments, and department members seeded successfully!");
+            System.out.println("✔️Users, departments, and department members seeded successfully!");
+            //System.out.println("\u2705 Users, departments, and department members seeded successfully!");
+
         }
     }
 

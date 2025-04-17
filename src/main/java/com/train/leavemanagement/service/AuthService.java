@@ -5,6 +5,7 @@ import com.train.leavemanagement.dto.RegisterRequestDTO;
 import com.train.leavemanagement.entity.User;
 import com.train.leavemanagement.repository.UserRepository;
 import com.train.leavemanagement.util.JwtUtil;
+import com.train.leavemanagement.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,11 +26,24 @@ public class AuthService {
     private final RedisTemplate<String, String> redisTemplate;
 
     // Register User
-    public String register(RegisterRequestDTO requestDTO) {
+
+    public void register(RegisterRequestDTO requestDTO) {
+        // Create a temporary User object for validation
+        User tempUser = User.builder()
+                .name(requestDTO.getName())
+                .email(requestDTO.getEmail())
+                .password(requestDTO.getPassword()) // Don't encode yet
+                .build();
+
+        // 🔍 Validate input
+        ValidationUtil.validateUserRegistration(tempUser);
+
+        // 💥 Check if email is taken AFTER validation
         if (userRepository.existsByEmail(requestDTO.getEmail())) {
             throw new RuntimeException("Email already taken");
         }
 
+        // ✅ Build actual user object with encoded password
         User user = User.builder()
                 .name(requestDTO.getName())
                 .email(requestDTO.getEmail())
@@ -38,8 +52,8 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
-        return "Registration Successfully";
     }
+
 
     // Login User
     public String login(LoginRequestDTO loginRequestDTO) {
