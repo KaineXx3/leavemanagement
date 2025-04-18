@@ -16,6 +16,9 @@ public class Leave {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private LeaveReasonType leaveReasonType;
     private LocalDate startFrom;
     private LocalDate endAt;
     @Enumerated(EnumType.STRING)

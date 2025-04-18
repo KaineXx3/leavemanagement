@@ -94,6 +94,7 @@ public class LeaveService {
                 .startFrom(createLeaveDTO.getStartFrom())
                 .endAt(createLeaveDTO.getEndAt())
                 .applicationStatus(LeaveStatusType.PENDING)
+                .leaveReasonType(createLeaveDTO.getLeaveReasonType())
                 .user(user)
                 .build();
         leaveRepository.save(leave);
@@ -106,6 +107,7 @@ public class LeaveService {
                 .userId(leave.getUser().getId())
                 .startFrom(leave.getStartFrom())
                 .endAt(leave.getEndAt())
+                .leaveReasonType(leave.getLeaveReasonType())
                 .applicationStatus(leave.getApplicationStatus())
                 .build();
     }
@@ -114,6 +116,7 @@ public class LeaveService {
         return LeaveReportDTO.builder()
                 .userId(leave.getUser().getId())
                 .userName(leave.getUser().getName())
+                .leaveReasonType(leave.getLeaveReasonType())
                 .startFrom(leave.getStartFrom())
                 .endAt(leave.getEndAt())
                 .build();
