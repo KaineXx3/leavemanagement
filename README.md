@@ -28,13 +28,6 @@ Lombok
 
 
 ⚙️ How to Run
-Option 1: Running with Maven
-# 1. Clone the repo
 git clone https://github.com/your-username/LeaveManagementSystem.git
-
-# 2. Run the Spring Boot application
-./mvnw spring-boot:run
-
-Option 2: Running with Docker Compose
 docker-compose up -d
 
