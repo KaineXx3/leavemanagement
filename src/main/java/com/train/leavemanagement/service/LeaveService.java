@@ -42,8 +42,16 @@ public class LeaveService {
 //        return leaveRepository.findByApplicationStatus(leaveStatusType).stream().map(this::statusReport).collect(Collectors.toList());
 //    }
 
-    @Cacheable(value = "leaveRequestsByStatus", key = "#leaveStatusType.name()")
+    @Cacheable(
+            value = "leaveRequestsByStatus",
+            key = "#leaveStatusType.name()",
+            unless = "#result == null or #result.isEmpty()"
+    )
     public List<LeaveReportDTO> getLeaveByRequestType(LeaveStatusType leaveStatusType) {
+        User user = securityService.getAuthenticatedUser();
+        if (!user.getRole().equals(RoleType.ADMIN) && !user.getRole().equals(RoleType.MANAGER)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allow to get the leave request");
+        }
         System.out.println("Fetching leave requests with status: " + leaveStatusType);
         List<Leave> leaves = leaveRepository.findByApplicationStatus(leaveStatusType);
         if (leaves == null) return new ArrayList<>(); // Avoid null returns
@@ -52,6 +60,7 @@ public class LeaveService {
 
 
     @Transactional
+    @CacheEvict(value = "leaveRequestsByStatus", allEntries = true)
     public void editLeaveRequestByAdminOrManager(Long leaveId, LeaveStatusType leaveStatusType) {
         User user = securityService.getAuthenticatedUser();
         if (!user.getRole().equals(RoleType.ADMIN) && !user.getRole().equals(RoleType.MANAGER)) {

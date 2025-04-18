@@ -46,13 +46,13 @@ public class LeaveController {
         }
     }
 
-    @Operation(summary = "Get leave requests by status type (e.g. PENDING, APPROVED, REJECTED)")
+    @Operation(summary = "Admin or Manager get leave requests by status type (e.g. PENDING, APPROVED, REJECTED)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved leave requests"),
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(schema = @Schema(implementation = String.class)))
     })
-    @GetMapping("/requestType")
+    @GetMapping("/report/requestType")
     public ResponseEntity<List<LeaveReportDTO>> getLeaveRequestType(
             @Parameter(description = "Leave status type") @RequestParam LeaveStatusType leaveStatusType) {
         try {
